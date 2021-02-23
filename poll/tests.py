@@ -27,6 +27,12 @@ def create_poll():
                     description='How much?'
         )
 
+def create_poll_question(poll):
+    return PollQuestion.objects.create(
+                    poll=poll,
+                    title='Have you ever had?'
+        )
+
 def create_admin_user():
     return User.objects.create(username='admin001', role=User.ROLE_ADMINISTRATOR)
 
@@ -123,3 +129,43 @@ class BasicAdminPollQuestionTests(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertEqual(PollQuestion.objects.count(), 1)
         self.assertEqual(PollQuestion.objects.get().choice_type, PollQuestion.MLTPL)
+
+    def test_update_poll_question(self):
+        '''
+        Create poll question
+        1) Change only title
+        2) Change title and type (leave poll id same)
+        '''
+        poll_question = create_poll_question(self.poll)
+        self.assertEqual(PollQuestion.objects.count(), 1)
+
+        url = reverse('update-poll-question', kwargs={'poll_pk':self.poll.pk, 'pk':poll_question.pk})
+        data = {
+                'poll': self.poll.pk,
+                'title':'Who is your daddy?',
+                }
+        response = self.client.put(url, data, format='json')
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(PollQuestion.objects.get().choice_type, None)
+
+        self.assertEqual(PollQuestion.objects.count(), 1)
+
+        data = {
+                'poll': self.poll.pk,
+                'title':'Who is your daddy?',
+                'answer_choices':json.dumps({'choiceType':PollQuestion.MLTPL, 'choices':['Big D', 'Who knows?']})
+                }
+
+        response = self.client.put(url, data, format='json')
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(PollQuestion.objects.count(), 1)
+        self.assertEqual(PollQuestion.objects.get().choice_type, PollQuestion.MLTPL)
+
+    def test_destroy_poll_question(self):
+        poll_question = create_poll_question(self.poll)
+        self.assertEqual(PollQuestion.objects.count(), 1)
+
+        url = reverse('destroy-poll-question', kwargs={'poll_pk':self.poll.pk, 'pk':poll_question.pk})
+        response = self.client.delete(url, format='json')
+        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
+        self.assertEqual(PollQuestion.objects.count(), 0)

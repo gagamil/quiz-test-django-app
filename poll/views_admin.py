@@ -2,8 +2,9 @@ from rest_framework import generics
 from rest_framework.permissions import IsAuthenticated
 
 from common.views import AdminOnly
-from .models import Poll
-from .serializers import PollCreateSerializer, PollUpdateSerializer, PollQuestionCreateSerializer
+from .models import Poll, PollQuestion
+from .serializers import PollCreateSerializer, PollUpdateSerializer, PollQuestionCreateSerializer, \
+    PollQuestionUpdateSerializer
 
 
 class PollCreateView(generics.CreateAPIView):
@@ -28,3 +29,17 @@ class PollDestroyView(generics.DestroyAPIView):
 class PollQuestionCreateView(generics.CreateAPIView):
     serializer_class = PollQuestionCreateSerializer
     permission_classes = [IsAuthenticated&AdminOnly]
+
+
+class PollQuestionUpdateView(generics.UpdateAPIView):
+    serializer_class = PollQuestionUpdateSerializer
+    permission_classes = [IsAuthenticated&AdminOnly]
+
+    def get_queryset(self):
+        return PollQuestion.objects.all()
+
+
+class PollQuestionDestroyView(generics.DestroyAPIView):
+    permission_classes = [IsAuthenticated&AdminOnly]
+    def get_queryset(self):
+        return PollQuestion.objects.all()
