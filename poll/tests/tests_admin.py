@@ -10,7 +10,7 @@ from rest_framework.test import APITestCase
 from rest_framework import status
 
 from common.models import User
-from .models import Poll, PollQuestion
+from poll.models import Poll, PollQuestion
 
 
 def get_start_finish_dates():

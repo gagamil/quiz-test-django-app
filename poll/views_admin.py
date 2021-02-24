@@ -3,7 +3,7 @@ from rest_framework.permissions import IsAuthenticated
 
 from common.views import AdminOnly
 from .models import Poll, PollQuestion
-from .serializers import PollCreateSerializer, PollUpdateSerializer, PollQuestionCreateSerializer, \
+from .serializers_admin import PollCreateSerializer, PollUpdateSerializer, PollQuestionCreateSerializer, \
     PollQuestionUpdateSerializer
 
 
