@@ -23,8 +23,11 @@ class Poll(models.Model):
     objects = models.Manager()
     client_objects = ClientPollManager()
 
-    
+    @property
+    def ordered_question_ids(self):
+        return self.get_pollquestion_order()
 
+    
 class PollQuestion(models.Model):
     '''
     Holds common question data
@@ -40,8 +43,11 @@ class PollQuestion(models.Model):
     poll = models.ForeignKey(Poll, on_delete=models.PROTECT)
 
     title = models.CharField(max_length=DEF_CHAR_FIELD_LENGTH)
-
+    
     answer_choices = models.JSONField(null=True, blank=True)
+
+    class Meta:
+        order_with_respect_to = 'poll'
 
     @property
     def choice_type(self):
