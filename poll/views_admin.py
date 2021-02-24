@@ -3,8 +3,28 @@ from rest_framework.permissions import IsAuthenticated
 
 from common.views import AdminOnly
 from .models import Poll, PollQuestion
-from .serializers_admin import PollCreateSerializer, PollUpdateSerializer, PollQuestionCreateSerializer, \
+from .serializers_admin import PollUpdateOrderingSerializer, PollListSerializer, PollCreateSerializer, PollUpdateSerializer, PollQuestionCreateSerializer, \
     PollQuestionUpdateSerializer
+
+
+class PollUpdateOrderingView(generics.UpdateAPIView):
+    serializer_class = PollUpdateOrderingSerializer
+    permission_classes = [IsAuthenticated&AdminOnly]
+
+    def get_queryset(self):
+        return Poll.objects.all()
+
+    def perform_update(self, serializer):
+        poll = self.get_object()
+        poll.set_pollquestion_order(serializer.validated_data['ordered_question_ids'])
+
+
+class PollListView(generics.ListAPIView):
+    serializer_class = PollListSerializer
+    permission_classes = [IsAuthenticated&AdminOnly]
+
+    def get_queryset(self):
+        return Poll.objects.all()
 
 
 class PollCreateView(generics.CreateAPIView):

@@ -1,5 +1,6 @@
 from datetime import timedelta
 import json
+import io
 
 #from django.contrib.auth.models import User
 from django.core.serializers.json import DjangoJSONEncoder
@@ -8,9 +9,11 @@ from django.urls import reverse
 from django.utils import timezone as dt
 from rest_framework.test import APITestCase
 from rest_framework import status
+from rest_framework.parsers import JSONParser
 
 from common.models import User
 from poll.models import Poll, PollQuestion
+from poll.serializers_admin import PollListSerializer
 
 
 def get_start_finish_dates():
@@ -27,10 +30,10 @@ def create_poll():
                     description='How much?'
         )
 
-def create_poll_question(poll):
+def create_poll_question(poll, title='Have you ever had?'):
     return PollQuestion.objects.create(
                     poll=poll,
-                    title='Have you ever had?'
+                    title=title
         )
 
 def create_admin_user():
@@ -95,6 +98,49 @@ class BasicAdminPollQuestionTests(APITestCase):
     def setUpTestData(cls):
         # Set up data for the whole TestCase
         cls.poll = create_poll()
+
+    def test_poll_question_ordinals(self):
+        create_poll_question(self.poll, 'Question A')
+        create_poll_question(self.poll, 'Question B')
+        create_poll_question(self.poll, 'Question C')
+
+        self.assertEqual(list(self.poll.get_pollquestion_order()), [1,2,3])
+        self.poll.set_pollquestion_order([3, 1, 2])
+        self.assertEqual(list(self.poll.get_pollquestion_order()), [3,1,2])
+        create_poll_question(self.poll, 'Question D')
+        self.assertEqual(list(self.poll.get_pollquestion_order()), [3,1,2,4])
+    
+    def test_poll_question_ordinals_endpoint(self):
+        create_poll_question(self.poll, 'Question A')
+        create_poll_question(self.poll, 'Question B')
+        create_poll_question(self.poll, 'Question C')
+
+        # 1st GET run - just to be clear that default ordering is: [1,2,3]
+        url = reverse('fetch-poll-list')
+        response = self.client.get(url, format='json')
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(Poll.client_objects.count(), 1)
+
+        stream = io.BytesIO(response.content)
+        data = JSONParser().parse(stream)
+        self.assertEqual(data[0]['ordered_question_ids'], [1,2,3])
+
+        # Now update ordering via API endpoint to [3,1,2]
+        url = reverse('update-poll-ordering', kwargs={'pk':self.poll.pk})
+        data = {'ordered_question_ids': [3,1,2]}
+        response = self.client.put(url, data, format='json')
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        
+        # 2nd GET run - just to be clear that default ordering is: [3,1,2]
+        url = reverse('fetch-poll-list')
+        response = self.client.get(url, format='json')
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(Poll.client_objects.count(), 1)
+
+        stream = io.BytesIO(response.content)
+        data = JSONParser().parse(stream)
+        self.assertEqual(data[0]['ordered_question_ids'], [3,1,2])
+
 
     def test_create_poll_question_string(self):
         url = reverse('create-poll-question', kwargs={'poll_pk':self.poll.pk})
