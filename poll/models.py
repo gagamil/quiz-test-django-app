@@ -1,8 +1,17 @@
 import json
 from django.db import models
+from django.utils import timezone as dt
 
 
 DEF_CHAR_FIELD_LENGTH = 200
+
+
+class ClientPollManager(models.Manager):
+    def get_queryset(self):
+        return super().get_queryset().filter(
+            start_date__gte=dt.localdate(),
+            finish_date__gte=dt.localdate()
+            )
 
 
 class Poll(models.Model):
@@ -10,6 +19,11 @@ class Poll(models.Model):
     start_date = models.DateField()
     finish_date = models.DateField()
     description = models.TextField()
+
+    objects = models.Manager()
+    client_objects = ClientPollManager()
+
+    
 
 class PollQuestion(models.Model):
     '''
