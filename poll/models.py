@@ -27,6 +27,13 @@ class Poll(models.Model):
     def ordered_question_ids(self):
         return self.get_pollquestion_order()
 
+    @property
+    def questions_json(self):
+        json_data = []
+        for question in self.pollquestion_set.all():
+            json_data.append({'pollTemplateQuestionId':question.pk, 'title':question.title, 'choices':question.answer_choices})
+        return json_data
+
     
 class PollQuestion(models.Model):
     '''
@@ -35,6 +42,8 @@ class PollQuestion(models.Model):
         Might be Single or Multiple choices (held in the same JSON field as: 
         choiceType: 'SNGL' or 'MLTPL')
         If field empty means that answer should be Text.
+    If we need to evaluate the user response then answer_choices should have some flag that would 
+    set the weight to the answer. Not implemented because has not been specced.
     '''
     # TXT = 0
     SNGL = 1
