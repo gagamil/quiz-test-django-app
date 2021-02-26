@@ -22,7 +22,7 @@ class BasicClientPollTests(APITestCase):
         self.client.force_authenticate(user=user)
 
     def test_fetch_poll_list_success(self):
-        url = reverse('fetch-poll-list')
+        url = reverse('client-fetch-poll-list')
         response = self.client.get(url, format='json')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(Poll.client_objects.count(), 0)
@@ -37,7 +37,7 @@ class BasicClientPollTests(APITestCase):
         with time_machine.travel(0, tick=False) as traveller:
             create_poll()
 
-            url = reverse('fetch-poll-list')
+            url = reverse('client-fetch-poll-list')
             response = self.client.get(url, format='json')
             self.assertEqual(response.status_code, status.HTTP_200_OK)
             self.assertEqual(Poll.client_objects.count(), 1)
