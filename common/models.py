@@ -10,4 +10,4 @@ class User(AbstractUser):
         (ROLE_SIMPLE, 'Simple user')
     )
 
-    role = models.IntegerField(choices=ROLE_CHOICES)
+    role = models.IntegerField(choices=ROLE_CHOICES, default=ROLE_SIMPLE)
