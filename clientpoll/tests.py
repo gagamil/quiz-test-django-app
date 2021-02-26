@@ -3,6 +3,7 @@ from django.utils import timezone as dt
 from rest_framework.test import APITestCase
 from rest_framework import status
 from rest_framework.parsers import JSONParser
+from rest_framework.authtoken.models import Token
 
 from common.models import User
 from common.test_utils import create_poll_template
@@ -17,7 +18,8 @@ class BasicClientPollTests(APITestCase):
     fixtures = ['poll.json']
     def setUp(self):
         self.user = create_client_user()
-        self.client.force_authenticate(user=self.user)
+        token = Token.objects.create(user=self.user)
+        self.client.credentials(HTTP_AUTHORIZATION='Token ' + token.key)
         self.poll = Poll.objects.get()
 
     def test_create_poll(self):

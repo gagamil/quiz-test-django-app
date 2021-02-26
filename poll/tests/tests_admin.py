@@ -10,6 +10,7 @@ from django.utils import timezone as dt
 from rest_framework.test import APITestCase
 from rest_framework import status
 from rest_framework.parsers import JSONParser
+from rest_framework.authtoken.models import Token
 
 from common.test_utils import get_sngl_choice_answer, get_mltpl_choice_answer
 from common.models import User
@@ -44,8 +45,9 @@ def create_admin_user():
 
 class BasicAdminPollTests(APITestCase):
     def setUp(self):
-        user= create_admin_user()
-        self.client.force_authenticate(user=user)
+        user = create_admin_user()
+        token = Token.objects.create(user=user)
+        self.client.credentials(HTTP_AUTHORIZATION='Token ' + token.key)
 
     def test_create_poll(self):
         start_date, finish_date = get_start_finish_dates()
@@ -93,7 +95,8 @@ class BasicAdminPollTests(APITestCase):
 class BasicAdminPollQuestionTests(APITestCase):
     def setUp(self):
         user= create_admin_user()
-        self.client.force_authenticate(user=user)
+        token = Token.objects.create(user=user)
+        self.client.credentials(HTTP_AUTHORIZATION='Token ' + token.key)
         
     @classmethod
     def setUpTestData(cls):

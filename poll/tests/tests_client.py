@@ -1,10 +1,11 @@
+import io
+import time_machine
 from django.urls import reverse
 from django.utils import timezone as dt
 from rest_framework.test import APITestCase
 from rest_framework import status
-import io
 from rest_framework.parsers import JSONParser
-import time_machine
+from rest_framework.authtoken.models import Token
 
 from common.models import User
 from poll.models import Poll, PollQuestion
@@ -19,7 +20,8 @@ def create_client_user():
 class BasicClientPollTests(APITestCase):
     def setUp(self):
         user= create_client_user()
-        self.client.force_authenticate(user=user)
+        token = Token.objects.create(user=user)
+        self.client.credentials(HTTP_AUTHORIZATION='Token ' + token.key)
 
     def test_fetch_poll_list_success(self):
         url = reverse('client-fetch-poll-list')
