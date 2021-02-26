@@ -11,6 +11,7 @@ from rest_framework.test import APITestCase
 from rest_framework import status
 from rest_framework.parsers import JSONParser
 
+from common.test_utils import get_sngl_choice_answer, get_mltpl_choice_answer
 from common.models import User
 from poll.models import Poll, PollQuestion
 from poll.serializers_admin import PollListSerializer
@@ -157,7 +158,7 @@ class BasicAdminPollQuestionTests(APITestCase):
         data = {
                 'poll': self.poll.pk,
                 'title':'Who is your daddy?',
-                'answer_choices':json.dumps({'choiceType':PollQuestion.SNGL, 'choices':['Big D', 'Who knows?']})
+                'answer_choices':get_sngl_choice_answer()
                 }
         response = self.client.post(url, data, format='json')
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
@@ -169,7 +170,7 @@ class BasicAdminPollQuestionTests(APITestCase):
         data = {
                 'poll': self.poll.pk,
                 'title':'Who is your daddy?',
-                'answer_choices':json.dumps({'choiceType':PollQuestion.MLTPL, 'choices':['Big D', 'Who knows?']})
+                'answer_choices':get_mltpl_choice_answer()
                 }
         response = self.client.post(url, data, format='json')
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
