@@ -36,12 +36,12 @@ Should be implemented using Djnago (2.2.10) and DRF.
 
 # Implementation
 
-Since I really needed to use JSONFields I didn't stick with the Django 2x and switched to the latest version. I believe that sticking to 2x is silly and generally bad practice.
-Unless you have some legace stuff that basically forces you to use an older version of the framework.
+Since I really needed to use JSONFields I didn't stick with the Django 2x and switched to the latest version. I believe that sticking to 2x is generally silly.
+This is unless you have some legacy stuff that basically forces you to use an older version of the framework.
 
 There are 3 apps within the Django project
 
-## common
+## Common
 Holds the custom user model.
 
 ## Poll
