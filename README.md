@@ -1,7 +1,14 @@
 # quiz-test-django-app
 This is a Django app developed as one of the required interview steps
 
-I was asked to create a django base rest api for a poll app which should have the following characteristics:
+I was asked to create a django base rest api for a poll app.
+I was given a time constraint of 3-4 hours.
+Somehow I didn't manage to fit in this timeframe.
+It took me about 15-20 hours to make this minimal version. (+-3 hours a day for 5 days).
+While I was working on the app new product insights were constantly coming up and I had to stop and think over.
+However I didn't have to make any significant changes while working on the app (thanks separation of responsibility).
+
+Here are the main requirements >>>
 
 # User types
 
