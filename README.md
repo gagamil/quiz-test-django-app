@@ -52,4 +52,12 @@ Is created using the template when Client wants to pass the poll.
 Basically a data transfer object. 
 Need this because the template might be altered during active poll test by user.
 
+# Quickstart
+
+1) Create python environment and activate it
+2) pip install -r requirements.txt
+3) pip manage.py test
+
+Check the tests and urls.
+The views are pretty basic with few customizations.
 
