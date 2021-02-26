@@ -13,6 +13,11 @@ class PollCreateSerializer(serializers.ModelSerializer):
     class Meta:
         model = Poll
         fields = ['title', 'start_date', 'finish_date', 'description']
+    
+    def validate(self, data):
+        if data['start_date'] > data['finish_date']:
+             raise serializers.ValidationError("finish must occur after start")
+        return data
 
 
 class PollUpdateSerializer(serializers.ModelSerializer):
