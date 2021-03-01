@@ -18,10 +18,6 @@ def create_client_user():
 
 
 class BasicClientPollTests(APITestCase):
-    def setUp(self):
-        user= create_client_user()
-        token = Token.objects.create(user=user)
-        self.client.credentials(HTTP_AUTHORIZATION='Token ' + token.key)
 
     def test_fetch_poll_list_success(self):
         url = reverse('client-fetch-poll-list')
