@@ -6,6 +6,11 @@ from .models import ClientPoll, ClientPollAnswer
 USER_ID_FIELD_LENGTH = 40 # equals DRF auth token.key length - not brilliant but at least something...
 
 
+class ClientPollListSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ClientPollAnswer
+        fields = ['client_poll', 'answer']
+
 class ClientPollCreateSerializer(serializers.ModelSerializer):
     user = serializers.CharField(min_length=USER_ID_FIELD_LENGTH, max_length=USER_ID_FIELD_LENGTH, required=True)
     class Meta:

@@ -6,7 +6,7 @@ from rest_framework.permissions import IsAuthenticated
 from common.models import User
 from poll.models import Poll
 from .models import ClientPoll, ClientPollAnswer
-from .serializers import ClientPollCreateSerializer, ClientPollAnswerCreateSerializer
+from .serializers import ClientPollCreateSerializer, ClientPollAnswerCreateSerializer, ClientPollListSerializer
 
 
 def get_user(request, username):
@@ -81,3 +81,18 @@ class ClientPollAnswerCreateView(generics.CreateAPIView):
         answer = serializer.validated_data['answer']
         user = get_user(self.request, serializer.validated_data['user'])
         ClientPollAnswer.objects.create(client_poll=poll, answer=answer)
+
+
+class ClientPollAnswerListView(generics.ListAPIView):
+    serializer_class = ClientPollListSerializer
+
+    def get_queryset(self):
+        user=None
+        if self.request.user.is_authenticated:
+            user = self.request.user
+        else:
+            user_id = self.request.query_params['user'] # not great
+            user, _ = User.objects.get_or_create(username=user_id, role=User.ROLE_SIMPLE)
+        if not user:
+            return ClientPollAnswer.objects.none()
+        return ClientPollAnswer.objects.filter(client_poll__user=user)
