@@ -1,4 +1,4 @@
-
+from django.http import Http404
 from rest_framework import generics, status
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
@@ -62,12 +62,16 @@ class ClientPollAnswerCreateView(generics.CreateAPIView):
         
         if self.request.user.is_authenticated:
             request.data['user'] = self.request.user.username
+            user = self.request.user
         else:
-            user_id = request.data['user']
+            user_id = request.data['user'] # not great
             user, _ = User.objects.get_or_create(username=user_id, role=User.ROLE_SIMPLE)
-        
+
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
+        if serializer.validated_data['client_poll'].user != user:
+            raise Http404("Poll not found.")
+            
         self.perform_create(serializer)
         headers = self.get_success_headers(serializer.data)
         return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)

@@ -14,8 +14,8 @@ from .models import ClientPoll, ClientPollAnswer
 CLIENT_USER_ID = '1234567890123456789012345678901234567890'
 
 
-def create_client_user():
-    return User.objects.create(username=CLIENT_USER_ID, role=User.ROLE_SIMPLE)
+def create_client_user(username=CLIENT_USER_ID):
+    return User.objects.create(username=username, role=User.ROLE_SIMPLE)
 
 
 class BasicClientPollTests(APITestCase):
@@ -133,12 +133,11 @@ class AuthenticatedClientPollTests(APITestCase):
                 'answer': poll_answer_data
                 }
         response = self.client.post(url, data, format='json')
-        print('response.data', response.data)
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertEqual(ClientPollAnswer.objects.count(), 1)
         #print(response.content)
     
-    def test_post_poll_result_fail(self):
+    def test_post_poll_result_fail_data_corrupt(self):
         self.assertEqual(ClientPollAnswer.objects.count(), 0)
         
         client_poll = ClientPoll.objects.create(
@@ -166,4 +165,27 @@ class AuthenticatedClientPollTests(APITestCase):
         #print(response.content)
 
 
-        
+    def test_post_poll_result_fail_wrong_user(self):
+        user = create_client_user(username='hacker')
+        client_poll = ClientPoll.objects.create(
+            poll_template=self.poll,
+            user=user,
+            title=self.poll.title,
+            start_date=self.poll.start_date,
+            finish_date=self.poll.finish_date,
+            description=self.poll.description,
+            questions=self.poll.questions_json
+            )
+        poll_answer_data = [
+            {'pollTemplateQuestionId':1, 'answer':['Up to 7 years']},
+            {'pollTemplateQuestionId':2, 'answer':['React', 'Django', 'GCP']},
+            {'pollTemplateQuestionId':3, 'answer':['Knows how to ask questions. Knows his weak and strong points. Has solid experience in his domain.']}
+            ]
+        url = reverse('create-client-poll-result')
+        data = {
+                'client_poll': self.poll.pk,
+                'answer': poll_answer_data
+                }
+        response = self.client.post(url, data, format='json')
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+        self.assertEqual(ClientPollAnswer.objects.count(), 0)
