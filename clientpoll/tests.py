@@ -18,6 +18,11 @@ valid_poll_answer_data = [
             {'pollTemplateQuestionId':2, 'answer':['React', 'Django', 'GCP']},
             {'pollTemplateQuestionId':3, 'answer':['Knows how to ask questions. Knows his weak and strong points. Has solid experience in his domain.']}
             ]
+invalidpoll_answer_data = [
+            {'pollTemplateQuestionId':99999999, 'answer':['Up to 7 years']},
+            {'pollTemplateQuestionId':2, 'answer':['React', 'Django', 'GCP']},
+            {'pollTemplateQuestionId':3, 'answer':['Knows how to ask questions. Knows his weak and strong points. Has solid experience in his domain.']}
+            ]
 
 def create_client_user(username=CLIENT_USER_ID):
     return User.objects.create(username=username, role=User.ROLE_SIMPLE)
@@ -52,15 +57,11 @@ class BasicClientPollTests(APITestCase):
             description=self.poll.description,
             questions=self.poll.questions_json
             )
-        poll_answer_data = [
-            {'pollTemplateQuestionId':1, 'answer':['Up to 7 years']},
-            {'pollTemplateQuestionId':2, 'answer':['React', 'Django', 'GCP']},
-            {'pollTemplateQuestionId':3, 'answer':['Knows how to ask questions. Knows his weak and strong points. Has solid experience in his domain.']}
-            ]
+
         url = reverse('create-client-poll-result')
         data = {
                 'client_poll': self.poll.pk,
-                'answer': poll_answer_data,
+                'answer': valid_poll_answer_data,
                 'user': CLIENT_USER_ID
                 }
         response = self.client.post(url, data, format='json')
@@ -81,15 +82,11 @@ class BasicClientPollTests(APITestCase):
             description=self.poll.description,
             questions=self.poll.questions_json
             )
-        poll_answer_data = [
-            {'pollTemplateQuestionId':99999999, 'answer':['Up to 7 years']},
-            {'pollTemplateQuestionId':2, 'answer':['React', 'Django', 'GCP']},
-            {'pollTemplateQuestionId':3, 'answer':['Knows how to ask questions. Knows his weak and strong points. Has solid experience in his domain.']}
-            ]
+    
         url = reverse('create-client-poll-result')
         data = {
                 'client_poll': self.poll.pk,
-                'answer': poll_answer_data,
+                'answer': invalidpoll_answer_data,
                 'user': CLIENT_USER_ID
                 }
         response = self.client.post(url, data, format='json')
@@ -174,15 +171,11 @@ class AuthenticatedClientPollTests(APITestCase):
             description=self.poll.description,
             questions=self.poll.questions_json
             )
-        poll_answer_data = [
-            {'pollTemplateQuestionId':1, 'answer':['Up to 7 years']},
-            {'pollTemplateQuestionId':2, 'answer':['React', 'Django', 'GCP']},
-            {'pollTemplateQuestionId':3, 'answer':['Knows how to ask questions. Knows his weak and strong points. Has solid experience in his domain.']}
-            ]
+
         url = reverse('create-client-poll-result')
         data = {
                 'client_poll': self.poll.pk,
-                'answer': poll_answer_data
+                'answer': valid_poll_answer_data
                 }
         response = self.client.post(url, data, format='json')
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
@@ -201,15 +194,11 @@ class AuthenticatedClientPollTests(APITestCase):
             description=self.poll.description,
             questions=self.poll.questions_json
             )
-        poll_answer_data = [
-            {'pollTemplateQuestionId':99999999, 'answer':['Up to 7 years']},
-            {'pollTemplateQuestionId':2, 'answer':['React', 'Django', 'GCP']},
-            {'pollTemplateQuestionId':3, 'answer':['Knows how to ask questions. Knows his weak and strong points. Has solid experience in his domain.']}
-            ]
+    
         url = reverse('create-client-poll-result')
         data = {
                 'client_poll': self.poll.pk,
-                'answer': poll_answer_data
+                'answer': invalidpoll_answer_data
                 }
         response = self.client.post(url, data, format='json')
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
@@ -228,15 +217,11 @@ class AuthenticatedClientPollTests(APITestCase):
             description=self.poll.description,
             questions=self.poll.questions_json
             )
-        poll_answer_data = [
-            {'pollTemplateQuestionId':1, 'answer':['Up to 7 years']},
-            {'pollTemplateQuestionId':2, 'answer':['React', 'Django', 'GCP']},
-            {'pollTemplateQuestionId':3, 'answer':['Knows how to ask questions. Knows his weak and strong points. Has solid experience in his domain.']}
-            ]
+        
         url = reverse('create-client-poll-result')
         data = {
                 'client_poll': self.poll.pk,
-                'answer': poll_answer_data
+                'answer': valid_poll_answer_data
                 }
         response = self.client.post(url, data, format='json')
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
