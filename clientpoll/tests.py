@@ -14,14 +14,14 @@ from .models import ClientPoll, ClientPollAnswer
 
 CLIENT_USER_ID = '1234567890123456789012345678901234567890'
 valid_poll_answer_data = [
-            {'pollTemplateQuestionId':1, 'answer':['Up to 7 years']},
-            {'pollTemplateQuestionId':2, 'answer':['React', 'Django', 'GCP']},
-            {'pollTemplateQuestionId':3, 'answer':['Knows how to ask questions. Knows his weak and strong points. Has solid experience in his domain.']}
+            {'pollTemplateQuestionId':1, "pollQuestionTitle": "What is your experience?", 'answer':['Up to 7 years']},
+            {'pollTemplateQuestionId':2, "pollQuestionTitle": "What you you use?", 'answer':['React', 'Django', 'GCP']},
+            {'pollTemplateQuestionId':3, "pollQuestionTitle": "Tell us what are the  crucial skills you'd expect from a good web dev.", 'answer':['Knows how to ask questions. Knows his weak and strong points. Has solid experience in his domain.']}
             ]
 invalidpoll_answer_data = [
-            {'pollTemplateQuestionId':99999999, 'answer':['Up to 7 years']},
-            {'pollTemplateQuestionId':2, 'answer':['React', 'Django', 'GCP']},
-            {'pollTemplateQuestionId':3, 'answer':['Knows how to ask questions. Knows his weak and strong points. Has solid experience in his domain.']}
+            {'pollTemplateQuestionId':99999999, "pollQuestionTitle": "What ze fcuk?", 'answer':['Up to 7 years']},
+            {'pollTemplateQuestionId':2, "pollQuestionTitle": "What you you use?",'answer':['React', 'Django', 'GCP']},
+            {'pollTemplateQuestionId':3, "pollQuestionTitle": "Tell us what are the  crucial skills you'd expect from a good web dev.",'answer':['Knows how to ask questions. Knows his weak and strong points. Has solid experience in his domain.']}
             ]
 
 def create_client_user(username=CLIENT_USER_ID):
