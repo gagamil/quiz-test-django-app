@@ -1,10 +1,9 @@
-# quiz-test-django-app
-This is a Django app developed as one of the required interview steps
+# poll-test-django-app
+This is a Django app developed as one of the required job interview steps (team lead)
 
-I was asked to create a django base rest api for a poll app.
 I was given a time constraint of 3-4 hours.
 Somehow I didn't manage to fit in this timeframe.
-It took me about 15-20 hours to make this minimal version. (+-3 hours a day for 5 days).
+It took me about 20 hours to make this minimal version. (+-3 hours a day for 5 days + xtra for some thoughts).
 While I was working on the app new product insights were constantly coming up and I had to stop and think over.
 However I didn't have to make any significant changes while working on the app (thanks separation of responsibility).
 
@@ -23,12 +22,12 @@ Here are the main requirements >>>
 
 # Data attributes
 
-## Quiz
+## Poll
 - name
 - start date (cannot be changed after creation)
 - end date
 
-## Quiz question
+## Poll question
 - question text
 - type (TEXT, Single choice, Multiple choice)
 
@@ -52,6 +51,11 @@ Is created using the template when Client wants to pass the poll.
 Basically a data transfer object. 
 Need this because the template might be altered during active poll test by user.
 
+## Client poll answer
+Holds json data that client provided when submitting the poll. 
+Assuming the client app is spa or mobile we only get the whole package of answers. Not one by one.
+When saving the answer we also save some xtra data from the questions.
+
 # Quickstart
 
 1) Create python environment and activate it
@@ -61,3 +65,24 @@ Need this because the template might be altered during active poll test by user.
 Check the tests and urls.
 The views are pretty basic with few customizations.
 
+# API Endpoints
+
+## Admin
+- /polltemplate/list/
+- /polltemplate/<ID>/update/
+- /polltemplate/<ID>/update/ordering/
+- /polltemplate/<ID>/delete/
+- /polltemplate/create/
+- /polltemplate/<ID>/question/<ID>/update/
+- /polltemplate/<ID>/question/<ID>/delete/
+- /polltemplate/<ID>/question/add/
+- /api-token-auth/
+
+## Client
+- /polltemplate/
+- /poll/create/
+- /poll/submit
+- /poll/list
+
+Naviagte endpoints in browser to get more insights or ask dev.
+Can get more info while wiewing the urls, views, serializers and tests.
